@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthSV extends BaseService {
     public function getQuery() {
@@ -26,6 +27,22 @@ class AuthSV extends BaseService {
         return $this->respondWithToken($token, $user,'user');
     }
 
+    public function logout(String $role) {
+        try {
+            if ($role == 'user') {
+                Auth::guard('api-user')->logout(); // Invalidate the token for the user
+            } else if ($role == 'admin') {
+                Auth::guard('api')->logout(); // Invalidate the token for the admin
+            }
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to log out: ' . $e->getMessage());
+        }
+    
+        return response()->json([
+            'message' => 'Successfully logged out',
+        ]);
+    }
+
     public function refreshToken(String $role) {
         $token = JWTAuth::getToken();
         if (!$token) {
@@ -42,9 +59,9 @@ class AuthSV extends BaseService {
         catch (\Exception $e) {
             throw new \Exception('Token is invalid');
         }
-        return $this->respondWithToken($newToken);
+        return $this->respondWithRefreshToken($newToken);
     }
-    protected function respondWithToken($token, $user = null, $role) {
+    public function respondWithToken($token, $user = null, $role) {
         $expires_in = Auth::guard('api-user')->factory()->getTTL() * 60;
         return response()->json([
             'access_token' => $token,
