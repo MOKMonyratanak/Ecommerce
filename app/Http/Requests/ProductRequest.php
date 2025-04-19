@@ -16,9 +16,11 @@ class ProductRequest extends FormRequest
         return [
             'name' => 'required|string',
             'category_id' => 'required|integer|exists:categories,id',
+            'brand_id' => 'required|integer|exists:brands,id',
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
-            'description' => 'string'
+            'description' => 'string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ];
     }
 }

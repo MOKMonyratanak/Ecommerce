@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Admin;
 
 use App\Http\Controllers\Api\v1\BaseApi;
 use App\Http\Requests\ExportRequest;
@@ -23,15 +23,22 @@ class ExportController extends BaseApi {
     public function createExport(ExportRequest $request) {
         try {
             $params = [];
-            $params = $request->only(['customer_id', 'product_id', 'quantity', 'price']);
+            $params = $request->only(['customer_id', 'product_id', 'quantity']);
+    
+            // Validate customer existence
             $customer = $this->userSV->getUserByID($params['customer_id']);
             if (!$customer) {
                 return $this->ErrorResponse('Customer not found', 404);
             }
+    
+            // Validate product existence and calculate price
             $product = $this->productSV->getProductByID($params['product_id']);
             if (!$product) {
                 return $this->ErrorResponse('Product not found', 404);
             }
+            $params['price'] = $product->price * $params['quantity']; // Calculate price
+    
+            // Create export
             $export = $this->exportSV->createExport($params);
             return $this->SuccessResponse($export, 'Export created successfully');
         } catch (\Exception $e) {

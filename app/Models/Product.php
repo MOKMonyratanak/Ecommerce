@@ -15,15 +15,22 @@ class Product extends Model
     protected $fillable = [
         'name',
         'category_id',
+        'brand_id',
         'price',
         'quantity',
         'description',
+        'image',
         'is_active',
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Category::class, 'brand_id');
     }
 
     public function imports()

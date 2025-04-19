@@ -22,6 +22,10 @@ class ExportSV extends BaseService {
         return $this->getAll($params); // Use the getAll function from BaseService
     }
 
+    public function getExportsByCustomerId($customer_id) {
+        return Export::where('customer_id', $customer_id)->get();
+    }
+
     public function createExport($data) {
         // Fetch the product by its ID
         $product = Product::where('id', $data['product_id'])->first(); // Ensure 'product_id' exists in the $data

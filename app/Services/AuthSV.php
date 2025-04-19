@@ -51,15 +51,15 @@ class AuthSV extends BaseService {
         try {
             if ($role == 'user') {
                 $newToken = Auth::guard('api-user')->setTTL(ttl: config('jwt.refresh_ttl'))->refresh();
-            }
-            else if ($role == 'admin') {
+                $user = Auth::guard('api-user')->user(); // Retrieve the user
+            } else if ($role == 'admin') {
                 $newToken = Auth::guard('api')->setTTL(ttl: config('jwt.refresh_ttl'))->refresh();
+                $user = Auth::guard('api')->user(); // Retrieve the admin user
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new \Exception('Token is invalid');
         }
-        return $this->respondWithRefreshToken($newToken);
+        return $this->respondWithRefreshToken($newToken, $user, $role);
     }
     public function respondWithToken($token, $user = null, $role) {
         $expires_in = Auth::guard('api-user')->factory()->getTTL() * 60;
@@ -68,15 +68,20 @@ class AuthSV extends BaseService {
             'token_type' => 'bearer',
             'data' => [
                 'user' => $user,
+                'role' => $role,
             ],
             'expires_in_second' => $expires_in
         ]);
     }
 
-    protected function respondWithRefreshToken($token, $user = null) {
+    protected function respondWithRefreshToken($token, $user = null, $role = null) {
         return response()->json([
             'refresh_token' => $token,
             'token_type' => 'bearer',
+            'data' => [
+                'user' => $user,
+                'role' => $role, // Include the role in the response
+            ],
             'expires_in_seconds' => config('jwt.refresh_ttl') * 60
         ]);
     }

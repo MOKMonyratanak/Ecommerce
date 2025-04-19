@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\v1\UserController;
-use App\Http\Controllers\Api\v1\CategoryController;
-use App\Http\Controllers\Api\v1\ProductController;
-use App\Http\Controllers\Api\v1\SupplierController;
-use App\Http\Controllers\Api\v1\ImportController;
-use App\Http\Controllers\Api\v1\ExportController;
+use App\Http\Controllers\Api\v1\Admin\UserController;
+use App\Http\Controllers\Api\v1\Admin\CategoryController;
+use App\Http\Controllers\Api\v1\Admin\ProductController;
+use App\Http\Controllers\Api\v1\Admin\SupplierController;
+use App\Http\Controllers\Api\v1\Admin\ImportController;
+use App\Http\Controllers\Api\v1\Admin\ExportController;
 use App\Http\Controllers\Api\v1\AuthController;
+use App\Http\Controllers\Api\v1\Admin\BrandController;
 
 Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($router) {
     Route::get('users/{global_id}', [UserController::class, 'getUser']);
@@ -20,6 +21,12 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('categories', [CategoryController::class, 'createCategory']);
     Route::put('categories/{id}', [CategoryController::class, 'updateCategory']);
     Route::delete('categories/{id}', [CategoryController::class, 'deleteCategory']);
+
+    Route::get('brands/{id}', [BrandController::class, 'getBrand']);
+    Route::get('brands', [BrandController::class, 'getAllBrands']);
+    Route::post('brands', [BrandController::class, 'createBrand']);
+    Route::put('brands/{id}', [BrandController::class, 'updateBrand']);
+    Route::delete('brands/{id}', [BrandController::class, 'deleteBrand']);
 
     Route::get('products/{id}', [ProductController::class, 'getProduct']);
     Route::get('products', [ProductController::class, 'getAllProducts']);

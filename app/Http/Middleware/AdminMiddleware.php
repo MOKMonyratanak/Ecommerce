@@ -15,6 +15,13 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return $next($request);
+        // Check if the authenticated user has the 'admin' role
+        dd('Working');
+        if (auth()->check() && auth()->user()->role === 'admin') {
+            return $next($request);
+        }
+
+        // Return a 403 Forbidden response if the user is not an admin
+        // return response()->json(['message' => 'Forbidden: Admins only'], 403);
     }
 }
