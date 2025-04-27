@@ -4,6 +4,7 @@ use App\Http\Middleware\UserMiddleware;
 use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\User\ProductController;
 use App\Http\Controllers\Api\v1\User\ExportController;
+use App\Http\Controllers\Api\v1\User\UserController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -18,4 +19,7 @@ Route::group(['middleware' => 'auth:api-user', 'prefix' => 'auth/v1'], function 
     Route::post('exports', [ExportController::class, 'createExport']);
     Route::get('exports/{global_id}', [ExportController::class, 'getExport']);
     Route::get('exports', [ExportController::class, 'getAllExports']);
+
+    Route::put('profile', [UserController::class, 'updateProfile']);
+    Route::get('profile', [UserController::class, 'viewProfile']);
 });
